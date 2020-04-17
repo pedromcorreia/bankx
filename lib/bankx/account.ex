@@ -53,6 +53,7 @@ defmodule Bankx.Account do
     %Profile{}
     |> Profile.changeset(attrs)
     |> Repo.insert()
+    |> validate_bank_account()
   end
 
   @doc """
@@ -71,6 +72,7 @@ defmodule Bankx.Account do
     profile
     |> Profile.changeset(attrs)
     |> Repo.update()
+    |> validate_bank_account()
   end
 
   @doc """
@@ -100,5 +102,27 @@ defmodule Bankx.Account do
   """
   def change_profile(%Profile{} = profile) do
     Profile.changeset(profile, %{})
+  end
+
+  defp validate_bank_account({:ok, %Profile{} = profile}) do
+    profile
+    |> Map.values()
+    |> Enum.filter(&(!&1))
+    |> Enum.empty?()
+    |> case do
+      true ->
+        update_profile_completed(profile)
+
+      _ ->
+        {:ok, profile}
+    end
+  end
+
+  defp validate_bank_account(profile), do: profile
+
+  defp update_profile_completed(%Profile{} = profile) do
+    profile
+    |> Profile.changeset_completed()
+    |> Repo.update()
   end
 end

@@ -94,6 +94,14 @@ defmodule Bankx.AccountTest do
       assert {:error, %Ecto.Changeset{}} = Account.create_profile(@invalid_attrs)
     end
 
+    test "create_profile/1 create then update, turns status" do
+      assert {:ok, %Profile{} = profile} = Account.create_profile(%{cpf: @cpf})
+      assert profile.cpf == @cpf
+      assert profile.status == :pending
+      assert {:ok, %Profile{} = profile} = Account.update_profile(profile, @update_attrs)
+      assert profile.status == :completed
+    end
+
     test "update_profile/2 with valid data updates the profile" do
       profile = profile_fixture()
       assert {:ok, %Profile{} = profile} = Account.update_profile(profile, @update_attrs)

@@ -38,25 +38,11 @@ defmodule Bankx.Account.Profile do
         changeset
       end
     end)
-    |> validate_bank_account()
   end
 
-  defp validate_bank_account(%Ecto.Changeset{} = changeset) do
-    value = Map.get(changeset.changes, :status)
-
-    case StatusEnum.equal?(:pending, value) or is_nil(value) do
-      true ->
-        check_completed(changeset)
-
-      false ->
-        add_error(changeset, :invite, "invalid invite code")
-    end
-  end
-
-  defp check_completed(%Ecto.Changeset{changes: changes} = changeset) when is_map(changes) do
-    case @params == Map.keys(changes) do
-      true -> Ecto.Changeset.put_change(changeset, :status, :completed)
-      _ -> changeset
-    end
+  @doc false
+  def changeset_completed(profile) do
+    profile
+    |> cast(%{status: :completed}, [:status])
   end
 end
