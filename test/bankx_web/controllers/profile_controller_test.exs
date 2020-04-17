@@ -11,7 +11,7 @@ defmodule BankxWeb.ProfileControllerTest do
     city: "some city",
     country: "some country",
     cpf: @cpf,
-    email: "email@mail.com",
+    email: "some@mail.com",
     gender: "some gender",
     name: "some name",
     state: "some state"
@@ -21,7 +21,7 @@ defmodule BankxWeb.ProfileControllerTest do
     city: "some updated city",
     country: "some updated country",
     cpf: @cpf,
-    email: "someemail@mail.com",
+    email: "someupdate@mail.com",
     gender: "some updated gender",
     name: "some updated name",
     state: "some updated state"
@@ -66,11 +66,11 @@ defmodule BankxWeb.ProfileControllerTest do
                "city" => "some city",
                "country" => "some country",
                "cpf" => @cpf,
-               "email" => "some email",
+               "email" => "some@mail.com",
                "gender" => "some gender",
                "name" => "some name",
                "state" => "some state",
-               "status" => :completed
+               "status" => "completed"
              } = json_response(conn, 200)["data"]
     end
 
@@ -95,11 +95,11 @@ defmodule BankxWeb.ProfileControllerTest do
                "city" => "some updated city",
                "country" => "some updated country",
                "cpf" => @cpf,
-               "email" => "some updated email",
+               "email" => "someupdate@mail.com",
                "gender" => "some updated gender",
                "name" => "some updated name",
                "state" => "some updated state",
-               "status" => :completed
+               "status" => "completed"
              } = json_response(conn, 200)["data"]
     end
 

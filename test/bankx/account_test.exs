@@ -102,6 +102,16 @@ defmodule Bankx.AccountTest do
       assert profile.status == :completed
     end
 
+    test "create_profile/1 create then update some field then complete, turns status" do
+      assert {:ok, %Profile{} = profile} = Account.create_profile(%{cpf: @cpf})
+      assert profile.cpf == @cpf
+      assert profile.status == :pending
+      assert {:ok, %Profile{} = profile} = Account.update_profile(profile, %{city: "Brasilia"})
+      assert profile.status == :pending
+      assert {:ok, %Profile{} = profile} = Account.update_profile(profile, @update_attrs)
+      assert profile.status == :completed
+    end
+
     test "update_profile/2 with valid data updates the profile" do
       profile = profile_fixture()
       assert {:ok, %Profile{} = profile} = Account.update_profile(profile, @update_attrs)
