@@ -11,22 +11,20 @@ defmodule BankxWeb.ProfileControllerTest do
     city: "some city",
     country: "some country",
     cpf: @cpf,
-    email: "some email",
+    email: "email@mail.com",
     gender: "some gender",
     name: "some name",
-    state: "some state",
-    status: "some status"
+    state: "some state"
   }
   @update_attrs %{
     birth_date: ~D[2011-05-18],
     city: "some updated city",
     country: "some updated country",
     cpf: @cpf,
-    email: "some updated email",
+    email: "someemail@mail.com",
     gender: "some updated gender",
     name: "some updated name",
-    state: "some updated state",
-    status: "some updated status"
+    state: "some updated state"
   }
   @invalid_attrs %{
     birth_date: nil,
@@ -36,8 +34,7 @@ defmodule BankxWeb.ProfileControllerTest do
     email: nil,
     gender: nil,
     name: nil,
-    state: nil,
-    status: nil
+    state: nil
   }
 
   def fixture(:profile) do
@@ -73,7 +70,7 @@ defmodule BankxWeb.ProfileControllerTest do
                "gender" => "some gender",
                "name" => "some name",
                "state" => "some state",
-               "status" => "some status"
+               "status" => :completed
              } = json_response(conn, 200)["data"]
     end
 
@@ -102,7 +99,7 @@ defmodule BankxWeb.ProfileControllerTest do
                "gender" => "some updated gender",
                "name" => "some updated name",
                "state" => "some updated state",
-               "status" => "some updated status"
+               "status" => :completed
              } = json_response(conn, 200)["data"]
     end
 

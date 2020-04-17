@@ -12,18 +12,21 @@ defmodule Bankx.Account.Profile do
     field :gender, :string
     field :name, :string
     field :state, :string
-    field :status, :string
+    field :status, StatusEnum, default: :pending
 
     timestamps()
   end
 
+  @params [:birth_date, :city, :country, :cpf, :email, :gender, :name, :state]
+
   @doc false
   def changeset(profile, attrs) do
     profile
-    |> cast(attrs, [:name, :email, :cpf, :birth_date, :gender, :city, :state, :country])
+    |> cast(attrs, @params)
     |> validate_required([
       :cpf
     ])
+    |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
     |> unique_constraint(:cpf)
     |> CPF.Ecto.Changeset.validate_cpf(:cpf)
@@ -35,5 +38,25 @@ defmodule Bankx.Account.Profile do
         changeset
       end
     end)
+    |> validate_bank_account()
+  end
+
+  defp validate_bank_account(%Ecto.Changeset{} = changeset) do
+    value = Map.get(changeset.changes, :status)
+
+    case StatusEnum.equal?(:pending, value) or is_nil(value) do
+      true ->
+        check_completed(changeset)
+
+      false ->
+        add_error(changeset, :invite, "invalid invite code")
+    end
+  end
+
+  defp check_completed(%Ecto.Changeset{changes: changes} = changeset) when is_map(changes) do
+    case @params == Map.keys(changes) do
+      true -> Ecto.Changeset.put_change(changeset, :status, :completed)
+      _ -> changeset
+    end
   end
 end

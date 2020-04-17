@@ -13,22 +13,20 @@ defmodule Bankx.AccountTest do
       city: "some city",
       country: "some country",
       cpf: @cpf,
-      email: "some email",
+      email: "some@mail.com",
       gender: "some gender",
       name: "some name",
-      state: "some state",
-      status: "some status"
+      state: "some state"
     }
     @update_attrs %{
       birth_date: ~D[2011-05-18],
       city: "some updated city",
       country: "some updated country",
       cpf: @cpf,
-      email: "some updated email",
+      email: "someupdate@mail.com",
       gender: "some updated gender",
       name: "some updated name",
-      state: "some updated state",
-      status: "some updated status"
+      state: "some updated state"
     }
     @invalid_attrs %{
       birth_date: nil,
@@ -38,8 +36,7 @@ defmodule Bankx.AccountTest do
       email: nil,
       gender: nil,
       name: nil,
-      state: nil,
-      status: nil
+      state: nil
     }
 
     def profile_fixture(attrs \\ %{}) do
@@ -67,16 +64,25 @@ defmodule Bankx.AccountTest do
       assert profile.city == "some city"
       assert profile.country == "some country"
       assert profile.cpf == @cpf
-      assert profile.email == "some email"
+      assert profile.email == "some@mail.com"
       assert profile.gender == "some gender"
       assert profile.name == "some name"
       assert profile.state == "some state"
-      assert profile.status == "some status"
+      assert profile.status == :completed
     end
 
     test "create_profile/1 with cpf valid" do
       assert {:ok, %Profile{} = profile} = Account.create_profile(%{cpf: @cpf})
       assert profile.cpf == @cpf
+      assert profile.status == :pending
+    end
+
+    test "create_profile/1 with cpf and email, status must be pending" do
+      assert {:ok, %Profile{} = profile} =
+               Account.create_profile(%{cpf: @cpf, email: "email@mail.com"})
+
+      assert profile.cpf == @cpf
+      assert profile.status == :pending
     end
 
     test "create_profile/1 with same cpf and email" do
@@ -95,11 +101,11 @@ defmodule Bankx.AccountTest do
       assert profile.city == "some updated city"
       assert profile.country == "some updated country"
       assert profile.cpf == @cpf
-      assert profile.email == "some updated email"
+      assert profile.email == "someupdate@mail.com"
       assert profile.gender == "some updated gender"
       assert profile.name == "some updated name"
       assert profile.state == "some updated state"
-      assert profile.status == "some updated status"
+      assert profile.status == :completed
     end
 
     test "update_profile/2 with invalid data returns error changeset" do
