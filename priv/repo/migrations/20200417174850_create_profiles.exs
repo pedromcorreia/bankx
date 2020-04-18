@@ -4,9 +4,10 @@ defmodule Bankx.Repo.Migrations.CreateProfiles do
   def change do
     create table(:profiles, primary_key: false) do
       add(:id, :uuid, primary_key: true)
-      add(:name, :string)
-      add(:email, :string)
-      add(:cpf, :string)
+      add(:name, :binary)
+      add(:email, :binary)
+      add(:cpf, :binary)
+      add(:cpf_hash, :binary)
       add(:birth_date, :date)
       add(:gender, :string)
       add(:city, :string)
@@ -18,6 +19,6 @@ defmodule Bankx.Repo.Migrations.CreateProfiles do
     end
 
     create(unique_index(:profiles, [:email]))
-    create(unique_index(:profiles, [:cpf]))
+    create(unique_index(:profiles, [:cpf_hash]))
   end
 end

@@ -26,14 +26,6 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :bankx, Bankx.Vault,
-  json_library: Jason,
-  ciphers: [
-    default:
-      {Cloak.Ciphers.AES.GCM,
-       tag: "AES.GCM.V1", key: Base.decode64!("qaeOkEk/ULdKt89pE79anM95n3k9mb9rngw8+ntudps=")}
-  ]
-
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

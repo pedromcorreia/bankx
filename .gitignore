@@ -28,3 +28,5 @@ bankx-*.tar
 /priv/static/
 *.swp
 *.swo
+.env
+.env

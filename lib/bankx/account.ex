@@ -5,7 +5,7 @@ defmodule Bankx.Account do
 
   import Ecto.Query, warn: false
   alias Bankx.Repo
-
+  alias Bankx.Encryption.{EncryptedField, HashField}
   alias Bankx.Account.Profile
 
   @doc """
@@ -39,7 +39,28 @@ defmodule Bankx.Account do
 
   """
   def get_profile_by_cpf(cpf) when is_nil(cpf), do: nil
-  def get_profile_by_cpf(cpf), do: Repo.get_by(Profile, cpf: cpf)
+
+  def get_profile_by_cpf(cpf) do
+    result = Repo.get_by(Profile, cpf_hash: HashField.hash(cpf))
+
+    case result do
+      nil ->
+        nil
+
+      _ ->
+        profile =
+          %Profile{
+            name: name,
+            email: email,
+            cpf: cpf
+          } = result
+
+        {:ok, email} = EncryptedField.load(email)
+        {:ok, name} = EncryptedField.load(name)
+        {:ok, cpf} = EncryptedField.load(cpf)
+        %{profile | email: email, name: name, cpf: cpf}
+    end
+  end
 
   @doc """
   Creates a profile.

@@ -49,6 +49,7 @@ defmodule BankxWeb.ProfileControllerTest do
   describe "account" do
     test "renders id when data is valid", %{conn: conn} do
       conn = post(conn, Routes.profile_path(conn, :account), profile: @create_attrs)
+
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.profile_path(conn, :show, id))
