@@ -60,19 +60,6 @@ defmodule BankxWeb.ProfileControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
-    test "renders status pending when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.profile_path(conn, :account), profile: %{cpf: @cpf})
-      assert %{"status" => "pending"} = json_response(conn, 201)["data"]
-
-      # this should return on response the pending
-      # conn = get(conn, Routes.profile_path(conn, :show, id))
-
-      # assert %{
-      #          "id" => id,
-      #          "status" => "completed"
-      #        } = json_response(conn, 200)["data"]
-    end
-
     test "renders status pending when data is valid, then try update still pending", %{conn: conn} do
       {:ok, profile} = Account.create_profile(%{cpf: @cpf})
       conn = post(conn, Routes.profile_path(conn, :account), profile: %{cpf: @cpf})

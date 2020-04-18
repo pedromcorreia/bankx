@@ -5,7 +5,7 @@ defmodule Bankx.Account.Profile do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "profiles" do
-    field :birth_date, :date
+    field :birth_date, EncryptedField
     field :city, :string
     field :country, :string
     field :cpf_hash, HashField
@@ -26,6 +26,7 @@ defmodule Bankx.Account.Profile do
     profile
     |> Map.merge(attrs)
     |> cast(attrs, @params)
+    |> CPF.Ecto.Changeset.validate_cpf(:cpf)
     |> validate_required([
       :cpf
     ])
@@ -43,14 +44,16 @@ defmodule Bankx.Account.Profile do
   defp encrypt_fields(changeset) do
     case changeset.valid? do
       true ->
-        {:ok, encrypted_email} = EncryptedField.dump(changeset.data.email)
-        {:ok, encrypted_name} = EncryptedField.dump(changeset.data.name)
-        {:ok, encrypted_name} = EncryptedField.dump(changeset.data.cpf)
+        {:ok, encrypted_birth_date} = EncryptedField.dump(get_field(changeset, :birth_date))
+        {:ok, encrypted_email} = EncryptedField.dump(get_field(changeset, :email))
+        {:ok, encrypted_name} = EncryptedField.dump(get_field(changeset, :name))
+        {:ok, encrypted_cpf} = EncryptedField.dump(get_field(changeset, :cpf))
 
         changeset
+        |> put_change(:birth_date, encrypted_birth_date)
         |> put_change(:email, encrypted_email)
         |> put_change(:name, encrypted_name)
-        |> put_change(:cpf, encrypted_name)
+        |> put_change(:cpf, encrypted_cpf)
 
       _ ->
         changeset
@@ -64,7 +67,6 @@ defmodule Bankx.Account.Profile do
         |> put_change(:cpf_hash, HashField.hash(get_field(changeset, :cpf)))
 
       _ ->
-        # return unmodified
         changeset
     end
   end

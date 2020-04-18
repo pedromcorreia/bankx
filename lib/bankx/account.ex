@@ -52,13 +52,22 @@ defmodule Bankx.Account do
           %Profile{
             name: name,
             email: email,
-            cpf: cpf
+            cpf: cpf,
+            birth_date: birth_date
           } = result
 
         {:ok, email} = EncryptedField.load(email)
         {:ok, name} = EncryptedField.load(name)
         {:ok, cpf} = EncryptedField.load(cpf)
-        %{profile | email: email, name: name, cpf: cpf}
+        {:ok, birth_date} = EncryptedField.load(birth_date)
+
+        %{
+          profile
+          | email: email,
+            name: name,
+            cpf: cpf,
+            birth_date: birth_date
+        }
     end
   end
 

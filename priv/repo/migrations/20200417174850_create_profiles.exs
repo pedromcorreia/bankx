@@ -8,7 +8,7 @@ defmodule Bankx.Repo.Migrations.CreateProfiles do
       add(:email, :binary)
       add(:cpf, :binary)
       add(:cpf_hash, :binary)
-      add(:birth_date, :date)
+      add(:birth_date, :binary)
       add(:gender, :string)
       add(:city, :string)
       add(:state, :string)

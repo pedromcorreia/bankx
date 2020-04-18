@@ -53,8 +53,11 @@ defmodule Bankx.AccountTest do
       {:ok, email} = EncryptedField.load(profile.email)
       {:ok, name} = EncryptedField.load(profile.name)
       {:ok, cpf} = EncryptedField.load(profile.cpf)
+      {:ok, birth_date} = EncryptedField.load(profile.birth_date)
 
-      Map.drop(%{profile | email: email, name: name, cpf: cpf}, [:cpf_hash])
+      Map.drop(%{profile | email: email, name: name, cpf: cpf, birth_date: birth_date}, [
+        :cpf_hash
+      ])
     end
 
     test "get_profile_by_cpf/1 returns the profile with given id" do
@@ -66,12 +69,11 @@ defmodule Bankx.AccountTest do
 
     test "create_profile/1 with valid data creates a profile" do
       assert {:ok, %Profile{} = profile} = Account.create_profile(@valid_attrs)
-      assert profile.birth_date == ~D[2010-04-17]
-      assert profile.city == "some city"
-      assert profile.country == "some country"
+
+      assert Map.drop(Account.get_profile_by_cpf(@cpf), [:cpf_hash]) ==
+               remove_cpf_hash(profile)
+
       assert profile.cpf_hash == HashField.hash(@valid_attrs.cpf)
-      assert profile.gender == "some gender"
-      assert profile.state == "some state"
       assert profile.status == :completed
     end
 
@@ -126,13 +128,8 @@ defmodule Bankx.AccountTest do
 
     test "update_profile/2 with valid data updates the profile" do
       profile = profile_fixture()
-      assert {:ok, %Profile{} = profile} = Account.update_profile(profile, @update_attrs)
-      assert profile.birth_date == ~D[2011-05-18]
-      assert profile.city == "some updated city"
-      assert profile.country == "some updated country"
+      assert {:ok, %Profile{} = new_profile} = Account.update_profile(profile, @update_attrs)
       assert profile.cpf_hash == HashField.hash(@valid_attrs.cpf)
-      assert profile.gender == "some updated gender"
-      assert profile.state == "some updated state"
       assert profile.status == :completed
     end
 
