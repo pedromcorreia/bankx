@@ -9,17 +9,20 @@ defmodule Bankx.Account do
   alias Bankx.Account.Profile
 
   @doc """
-  Returns the list of profiles.
+  Gets a single profile.
+
+  Raises `Ecto.NoResultsError` if the Profile does not exist.
 
   ## Examples
 
-      iex> list_profiles()
-      [%Profile{}, ...]
+      iex> get_profile!(123)
+      %Profile{}
+
+      iex> get_profile!(456)
+      ** (Ecto.NoResultsError)
 
   """
-  def list_profiles do
-    Repo.all(Profile)
-  end
+  def get_profile!(id), do: Repo.get!(Profile, id)
 
   @doc """
   Gets a single profile.
@@ -35,7 +38,8 @@ defmodule Bankx.Account do
       ** (Ecto.NoResultsError)
 
   """
-  def get_profile!(id), do: Repo.get!(Profile, id)
+  def get_profile_by_cpf(cpf) when is_nil(cpf), do: nil
+  def get_profile_by_cpf(cpf), do: Repo.get_by(Profile, cpf: cpf)
 
   @doc """
   Creates a profile.

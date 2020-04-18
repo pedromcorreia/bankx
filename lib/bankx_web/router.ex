@@ -7,6 +7,8 @@ defmodule BankxWeb.Router do
 
   scope "/api", BankxWeb do
     pipe_through :api
-    resources "/profiles", ProfileController, except: [:new, :edit]
+
+    resources "/profiles", ProfileController, except: [:new, :edit, :create, :update, :index]
+    post "/profiles/account", ProfileController, :account
   end
 end

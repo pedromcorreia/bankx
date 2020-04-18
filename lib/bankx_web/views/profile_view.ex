@@ -10,16 +10,11 @@ defmodule BankxWeb.ProfileView do
     %{data: render_one(profile, ProfileView, "profile.json")}
   end
 
-  def render("profile.json", %{profile: profile}) do
-    %{id: profile.id,
-      name: profile.name,
-      email: profile.email,
-      cpf: profile.cpf,
-      birth_date: profile.birth_date,
-      gender: profile.gender,
-      city: profile.city,
-      state: profile.state,
-      country: profile.country,
-      status: profile.status}
+  def render("profile.json", %{profile: profile = %{status: :completed}}) do
+    %{id: profile.id, status: profile.status}
+  end
+
+  def render("profile.json", %{profile: profile = %{status: :pending}}) do
+    %{status: profile.status}
   end
 end

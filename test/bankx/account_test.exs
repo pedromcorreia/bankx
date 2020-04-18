@@ -48,11 +48,6 @@ defmodule Bankx.AccountTest do
       profile
     end
 
-    test "list_profiles/0 returns all profiles" do
-      profile = profile_fixture()
-      assert Account.list_profiles() == [profile]
-    end
-
     test "get_profile!/1 returns the profile with given id" do
       profile = profile_fixture()
       assert Account.get_profile!(profile.id) == profile
@@ -130,12 +125,6 @@ defmodule Bankx.AccountTest do
       profile = profile_fixture()
       assert {:error, %Ecto.Changeset{}} = Account.update_profile(profile, @invalid_attrs)
       assert profile == Account.get_profile!(profile.id)
-    end
-
-    test "delete_profile/1 deletes the profile" do
-      profile = profile_fixture()
-      assert {:ok, %Profile{}} = Account.delete_profile(profile)
-      assert_raise Ecto.NoResultsError, fn -> Account.get_profile!(profile.id) end
     end
 
     test "change_profile/1 returns a profile changeset" do
