@@ -11,7 +11,8 @@ defmodule Bankx.Application do
       # Start the Ecto repository
       Bankx.Repo,
       # Start the endpoint when the application starts
-      BankxWeb.Endpoint
+      BankxWeb.Endpoint,
+      Bankx.Vault
       # Starts a worker by calling: Bankx.Worker.start_link(arg)
       # {Bankx.Worker, arg},
     ]

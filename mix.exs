@@ -42,7 +42,8 @@ defmodule Bankx.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:cpf, "~> 1.0"},
-      {:ecto_enum, "~> 1.4"}
+      {:ecto_enum, "~> 1.4"},
+      {:cloak, "1.0.2"}
     ]
   end
 
