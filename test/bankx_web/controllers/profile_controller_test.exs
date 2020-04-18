@@ -50,12 +50,13 @@ defmodule BankxWeb.ProfileControllerTest do
     test "renders id when data is valid", %{conn: conn} do
       conn = post(conn, Routes.profile_path(conn, :account), profile: @create_attrs)
 
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+      assert %{"referral_code" => referral_code} = json_response(conn, 201)["data"]
 
+      id = Bankx.Repo.one(Profile)
       conn = get(conn, Routes.profile_path(conn, :show, id))
 
       assert %{
-               "id" => id,
+               "referral_code" => referral_code,
                "status" => "completed"
              } = json_response(conn, 200)["data"]
     end

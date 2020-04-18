@@ -120,10 +120,13 @@ defmodule Bankx.AccountTest do
       assert {:ok, %Profile{} = profile} = Account.create_profile(%{cpf: @cpf})
       assert profile.cpf_hash == HashField.hash(@valid_attrs.cpf)
       assert profile.status == :pending
+      assert is_nil(profile.referral_code)
       assert {:ok, %Profile{} = profile} = Account.update_profile(profile, %{city: "Brasilia"})
       assert profile.status == :pending
+      assert is_nil(profile.referral_code)
       assert {:ok, %Profile{} = profile} = Account.update_profile(profile, @update_attrs)
       assert profile.status == :completed
+      refute is_nil(profile.referral_code)
     end
 
     test "update_profile/2 with valid data updates the profile" do

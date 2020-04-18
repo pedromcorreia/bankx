@@ -14,6 +14,7 @@ defmodule Bankx.Repo.Migrations.CreateProfiles do
       add(:state, :string)
       add(:country, :string)
       add(:status, :string)
+      add(:referral_code, :string)
 
       timestamps()
     end

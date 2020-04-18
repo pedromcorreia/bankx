@@ -14,6 +14,7 @@ defmodule Bankx.Account.Profile do
     field :gender, :string
     field :name, EncryptedField
     field :state, :string
+    field :referral_code, :string
     field :status, StatusEnum, default: :pending
 
     timestamps()
@@ -38,7 +39,10 @@ defmodule Bankx.Account.Profile do
 
   @doc false
   def changeset_completed(profile) do
-    cast(profile, %{status: :completed}, [:status])
+    {referral_code, _} = String.split_at(profile.id, 8)
+
+    profile
+    |> cast(%{status: :completed, referral_code: referral_code}, [:status, :referral_code])
   end
 
   defp encrypt_fields(changeset) do

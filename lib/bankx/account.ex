@@ -140,6 +140,7 @@ defmodule Bankx.Account do
 
   defp validate_bank_account({:ok, %Profile{} = profile}) do
     profile
+    |> Map.delete(:referral_code)
     |> Map.values()
     |> Enum.filter(&(!&1))
     |> Enum.empty?()

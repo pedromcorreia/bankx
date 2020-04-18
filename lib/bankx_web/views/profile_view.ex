@@ -11,7 +11,7 @@ defmodule BankxWeb.ProfileView do
   end
 
   def render("profile.json", %{profile: profile = %{status: :completed}}) do
-    %{id: profile.id, status: profile.status}
+    %{referral_code: profile.referral_code, status: profile.status}
   end
 
   def render("profile.json", %{profile: profile = %{status: :pending}}) do
