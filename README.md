@@ -39,7 +39,12 @@ My first choice: https://gist.github.com/pedromcorreia/c5b34e431c886b55eff5fa697
  `$ MIX_ENV=test mix coveralls`
 
  Be sure that the coverage is minimum 90%.
+ 
+ # For testing in postman
+ This show you how use API in real conditions.
 
+ https://www.getpostman.com/collections/83a8cd18664af13964a8
+ 
  # Contributing
 
  To contribute, please follow some patterns:
