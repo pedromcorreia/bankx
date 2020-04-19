@@ -3,7 +3,9 @@ defmodule BankxWeb.ProfileView do
   alias BankxWeb.ProfileView
   alias Bankx.Encryption.EncryptedField
 
-  def render("show.json", %{profile: profile = %{status: :completed, profiles: _profiles}}) do
+  def render("show.json", %{
+        profile: profile = %{status: :completed, profiles: _profiles}
+      }) do
     %{data: render_one(profile, ProfileView, "profile.json")}
   end
 
@@ -11,12 +13,16 @@ defmodule BankxWeb.ProfileView do
     %{data: render_one(profile, ProfileView, "profile.json")}
   end
 
-  def render("profile.json", %{profile: %{status: :completed, profiles: profiles}})
+  def render("profile.json", %{
+        profile: %{status: :completed, profiles: profiles}
+      })
       when is_list(profiles) do
     %{indications: indications(profiles)}
   end
 
-  def render("profile.json", %{profile: profile = %{status: :completed, profiles: _profiles}}) do
+  def render("profile.json", %{
+        profile: profile = %{status: :completed, profiles: _profiles}
+      }) do
     %{referral_code: profile.referral_code, status: :completed}
   end
 

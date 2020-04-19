@@ -50,9 +50,11 @@ defmodule BankxWeb.ProfileControllerTest do
 
   describe "account" do
     test "renders referral_code when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.profile_path(conn, :account), profile: @create_attrs)
+      conn =
+        post(conn, Routes.profile_path(conn, :account), profile: @create_attrs)
 
-      assert %{"referral_code" => referral_code} = json_response(conn, 201)["data"]
+      assert %{"referral_code" => referral_code} =
+               json_response(conn, 201)["data"]
 
       profile = Bankx.Repo.one(Profile)
 
@@ -63,31 +65,47 @@ defmodule BankxWeb.ProfileControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
-    test "renders referral_code when data is valid with referral_code", %{conn: conn} do
+    test "renders referral_code when data is valid with referral_code", %{
+      conn: conn
+    } do
       {:ok, profile_indicator} = Account.create_profile(@create_attrs_indicator)
 
       conn =
         post(conn, Routes.profile_path(conn, :account),
-          profile: %{@create_attrs | referral_code: profile_indicator.referral_code}
+          profile: %{
+            @create_attrs
+            | referral_code: profile_indicator.referral_code
+          }
         )
 
-      assert %{"referral_code" => referral_code} = json_response(conn, 201)["data"]
+      assert %{"referral_code" => referral_code} =
+               json_response(conn, 201)["data"]
     end
 
-    test "renders status pending when data is valid, then try update still pending", %{conn: conn} do
+    test "renders status pending when data is valid, then try update still pending",
+         %{conn: conn} do
       {:ok, _profile} = Account.create_profile(%{cpf: @cpf})
-      conn = post(conn, Routes.profile_path(conn, :account), profile: %{cpf: @cpf})
+
+      conn =
+        post(conn, Routes.profile_path(conn, :account), profile: %{cpf: @cpf})
+
       assert %{"status" => "pending"} = json_response(conn, 200)["data"]
     end
 
-    test "renders status pending when data is valid, then try update completed", %{conn: conn} do
+    test "renders status pending when data is valid, then try update completed",
+         %{conn: conn} do
       {:ok, _profile} = Account.create_profile(%{cpf: @cpf})
-      conn = post(conn, Routes.profile_path(conn, :account), profile: @create_attrs)
+
+      conn =
+        post(conn, Routes.profile_path(conn, :account), profile: @create_attrs)
+
       assert %{"status" => "completed"} = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.profile_path(conn, :account), profile: @invalid_attrs)
+      conn =
+        post(conn, Routes.profile_path(conn, :account), profile: @invalid_attrs)
+
       assert json_response(conn, 422)["errors"] != %{}
     end
 
@@ -110,7 +128,8 @@ defmodule BankxWeb.ProfileControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
-    test "render code pending account when account completed whitout indication", %{conn: conn} do
+    test "render code pending account when account completed whitout indication",
+         %{conn: conn} do
       {:ok, %Profile{referral_code: _referral_code} = profile} =
         Account.create_profile(@create_attrs)
 
@@ -121,7 +140,8 @@ defmodule BankxWeb.ProfileControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
-    test "render code pending account when account completed with indications", %{conn: conn} do
+    test "render code pending account when account completed with indications",
+         %{conn: conn} do
       {:ok, %Profile{referral_code: referral_code} = profile} =
         Account.create_profile(@create_attrs_indicator)
 

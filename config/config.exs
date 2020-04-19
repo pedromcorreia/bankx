@@ -13,7 +13,8 @@ config :bankx,
 # Configures the endpoint
 config :bankx, BankxWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "Irjhbs2rlMoyzUll0CY13k4qTFVG5dcpVeKTTKm89ulqQSmoG4wx9+kEPKG8ilfP",
+  secret_key_base:
+    "Irjhbs2rlMoyzUll0CY13k4qTFVG5dcpVeKTTKm89ulqQSmoG4wx9+kEPKG8ilfP",
   render_errors: [view: BankxWeb.ErrorView, accepts: ~w(json)],
   pubsub: [name: Bankx.PubSub, adapter: Phoenix.PubSub.PG2],
   live_view: [signing_salt: "DefMQVe1"]

@@ -31,7 +31,17 @@ defmodule Bankx.Account.Profile do
     timestamps()
   end
 
-  @params [:birth_date, :city, :country, :cpf, :email, :gender, :name, :state, :referral_code]
+  @params [
+    :birth_date,
+    :city,
+    :country,
+    :cpf,
+    :email,
+    :gender,
+    :name,
+    :state,
+    :referral_code
+  ]
 
   @update_params [:birth_date, :city, :country, :email, :gender, :name, :state]
 
@@ -71,15 +81,23 @@ defmodule Bankx.Account.Profile do
     {referral_code, _} = String.split_at(profile.id, 8)
 
     profile
-    |> cast(%{status: :completed, referral_code: referral_code}, [:status, :referral_code])
+    |> cast(%{status: :completed, referral_code: referral_code}, [
+      :status,
+      :referral_code
+    ])
   end
 
   defp encrypt_fields(changeset) do
     case changeset.valid? do
       true ->
-        {:ok, encrypted_birth_date} = EncryptedField.dump(get_field(changeset, :birth_date))
+        {:ok, encrypted_birth_date} =
+          EncryptedField.dump(get_field(changeset, :birth_date))
+
         {:ok, encrypted_cpf} = EncryptedField.dump(get_field(changeset, :cpf))
-        {:ok, encrypted_email} = EncryptedField.dump(get_field(changeset, :email))
+
+        {:ok, encrypted_email} =
+          EncryptedField.dump(get_field(changeset, :email))
+
         {:ok, encrypted_name} = EncryptedField.dump(get_field(changeset, :name))
 
         changeset
@@ -107,7 +125,10 @@ defmodule Bankx.Account.Profile do
   defp set_indicator(changeset) do
     case changeset.valid? && !is_nil(get_field(changeset, :referral_code)) do
       true ->
-        profile = Account.get_profile_by_referral_code(get_field(changeset, :referral_code))
+        profile =
+          Account.get_profile_by_referral_code(
+            get_field(changeset, :referral_code)
+          )
 
         changeset
         |> put_change(:profile_id, profile.id)
