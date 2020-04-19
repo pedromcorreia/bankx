@@ -1,6 +1,10 @@
 defmodule Bankx.Encryption.HashField do
   @behaviour Ecto.Type
 
+  @moduledoc """
+  This is a module that encode and decode crypto fields
+  """
+
   def type, do: :binary
 
   def cast(value) do

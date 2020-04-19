@@ -43,7 +43,8 @@ defmodule Bankx.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:cpf, "~> 1.0"},
       {:ecto_enum, "~> 1.4"},
-      {:cloak, "1.0.2"}
+      {:cloak, "1.0.2"},
+      {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false}
     ]
   end
 

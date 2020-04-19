@@ -1,4 +1,8 @@
 defmodule Bankx.Account.Profile do
+  @moduledoc """
+  Profile Schema
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
   alias Bankx.Encryption.{EncryptedField, HashField}
