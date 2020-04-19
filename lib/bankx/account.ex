@@ -11,7 +11,7 @@ defmodule Bankx.Account do
   @doc """
   Gets a single profile.
 
-  Raises `Ecto.NoResultsError` if the Profile does not exist.
+  IF Raises Ecto.Query.CastError, so response will be nil
 
   ## Examples
 
@@ -32,13 +32,43 @@ defmodule Bankx.Account do
     Ecto.Query.CastError -> nil
   end
 
-  def get_profile_by_referral_code(referral_code) when is_nil(referral_code), do: nil
+  @doc """
+  Gets a single profile by referral_code
+
+  ## Examples
+
+      iex> get_profile_by_referral_code(nil)
+      nil
+
+      iex> get_profile_by_referral_code(123)
+      %Profile{}
+
+      iex> get_profile_by_referral_code(456)
+      nil
+
+  """
+  def get_profile_by_referral_code(nil), do: nil
 
   def get_profile_by_referral_code(referral_code) do
     Repo.get_by(Profile, referral_code: referral_code)
   end
 
-  def get_profile_by_cpf(cpf) when is_nil(cpf), do: nil
+  @doc """
+  Gets a single profile by cpf
+
+  ## Examples
+
+      iex> get_profile_by_cpf(nil)
+      nil
+
+      iex> get_profile_by_cpf(123)
+      %Profile{}
+
+      iex> get_profile_by_cpf(456)
+      nil
+
+  """
+  def get_profile_by_cpf(nil), do: nil
 
   def get_profile_by_cpf(cpf) do
     result = Repo.get_by(Profile, cpf_hash: HashField.hash(cpf))
@@ -107,22 +137,6 @@ defmodule Bankx.Account do
     |> Profile.changeset_update(attrs)
     |> Repo.update()
     |> validate_bank_account()
-  end
-
-  @doc """
-  Deletes a profile.
-
-  ## Examples
-
-      iex> delete_profile(profile)
-      {:ok, %Profile{}}
-
-      iex> delete_profile(profile)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_profile(%Profile{} = profile) do
-    Repo.delete(profile)
   end
 
   defp validate_bank_account({:ok, %Profile{} = profile}) do

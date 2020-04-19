@@ -60,11 +60,25 @@ defmodule Bankx.AccountTest do
       ])
     end
 
+    test "get_profile_by_referral_code/1 returns the profile" do
+      profile = profile_fixture()
+
+      assert %Profile{} = Account.get_profile_by_referral_code(profile.referral_code)
+    end
+
+    test "get_profile_by_referral_code/1 returns nil" do
+      refute Account.get_profile_by_referral_code(nil)
+    end
+
     test "get_profile_by_cpf/1 returns the profile" do
       profile = profile_fixture()
 
       assert Map.drop(Account.get_profile_by_cpf(@cpf), [:cpf_hash]) ==
                remove_cpf_hash(profile)
+    end
+
+    test "get_profile_by_cpf/1 returns nil" do
+      refute Account.get_profile_by_cpf(nil)
     end
 
     test "create_profile/1 with valid data creates a profile" do
