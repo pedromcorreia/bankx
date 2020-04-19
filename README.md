@@ -36,7 +36,9 @@ My first choice: https://gist.github.com/pedromcorreia/c5b34e431c886b55eff5fa697
 
  Test all suite:
 
- `$ mix tests`
+ `$ MIX_ENV=test mix coveralls`
+
+ Be sure that the coverage is minimum 90%.
 
  # Contributing
 
