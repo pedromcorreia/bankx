@@ -22,22 +22,22 @@ defmodule Bankx.Account do
       ** (Ecto.NoResultsError)
 
   """
-  def get_profile!(id), do: Repo.get!(Profile, id)
+  def get_profile(nil), do: nil
 
-  @doc """
-  Gets a single profile.
+  def get_profile(id) do
+    Profile
+    |> Repo.get(id)
+    |> Repo.preload(:profiles)
+  rescue
+    Ecto.Query.CastError -> nil
+  end
 
-  Raises `Ecto.NoResultsError` if the Profile does not exist.
+  def get_profile_by_referral_code(referral_code) when is_nil(referral_code), do: nil
 
-  ## Examples
+  def get_profile_by_referral_code(referral_code) do
+    Repo.get_by(Profile, referral_code: referral_code)
+  end
 
-      iex> get_profile!(123)
-      %Profile{}
-
-      iex> get_profile!(456)
-      ** (Ecto.NoResultsError)
-
-  """
   def get_profile_by_cpf(cpf) when is_nil(cpf), do: nil
 
   def get_profile_by_cpf(cpf) do
@@ -104,7 +104,7 @@ defmodule Bankx.Account do
   """
   def update_profile(%Profile{} = profile, attrs) do
     profile
-    |> Profile.changeset(attrs)
+    |> Profile.changeset_update(attrs)
     |> Repo.update()
     |> validate_bank_account()
   end
@@ -125,22 +125,9 @@ defmodule Bankx.Account do
     Repo.delete(profile)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking profile changes.
-
-  ## Examples
-
-      iex> change_profile(profile)
-      %Ecto.Changeset{source: %Profile{}}
-
-  """
-  def change_profile(%Profile{} = profile) do
-    Profile.changeset(profile, %{})
-  end
-
   defp validate_bank_account({:ok, %Profile{} = profile}) do
     profile
-    |> Map.delete(:referral_code)
+    |> Map.drop([:referral_code, :profile_id])
     |> Map.values()
     |> Enum.filter(&(!&1))
     |> Enum.empty?()

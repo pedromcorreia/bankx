@@ -16,6 +16,8 @@ defmodule Bankx.Repo.Migrations.CreateProfiles do
       add(:status, :string)
       add(:referral_code, :string)
 
+      add(:profile_id, references(:profiles, type: :uuid))
+
       timestamps()
     end
 

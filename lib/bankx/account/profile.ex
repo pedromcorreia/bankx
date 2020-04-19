@@ -2,8 +2,12 @@ defmodule Bankx.Account.Profile do
   use Ecto.Schema
   import Ecto.Changeset
   alias Bankx.Encryption.{EncryptedField, HashField}
+  alias Bankx.Account.Profile
+  alias Bankx.Account
 
   @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type Ecto.UUID
+  @derive {Phoenix.Param, key: :id}
   schema "profiles" do
     field :birth_date, EncryptedField
     field :city, :string
@@ -17,16 +21,37 @@ defmodule Bankx.Account.Profile do
     field :referral_code, :string
     field :status, StatusEnum, default: :pending
 
+    belongs_to :profile, Profile
+    has_many :profiles, Profile
+
     timestamps()
   end
 
-  @params [:birth_date, :city, :country, :cpf, :email, :gender, :name, :state]
+  @params [:birth_date, :city, :country, :cpf, :email, :gender, :name, :state, :referral_code]
+
+  @update_params [:birth_date, :city, :country, :email, :gender, :name, :state]
 
   @doc false
   def changeset(profile, attrs) do
     profile
     |> Map.merge(attrs)
     |> cast(attrs, @params)
+    |> CPF.Ecto.Changeset.validate_cpf(:cpf)
+    |> validate_required([
+      :cpf
+    ])
+    |> validate_format(:email, ~r/@/)
+    |> set_hashed_fields
+    |> unique_constraint(:cpf_hash)
+    |> set_indicator
+    |> encrypt_fields
+  end
+
+  @doc false
+  def changeset_update(profile, attrs) do
+    profile
+    |> Map.merge(attrs)
+    |> cast(attrs, @update_params)
     |> CPF.Ecto.Changeset.validate_cpf(:cpf)
     |> validate_required([
       :cpf
@@ -69,6 +94,19 @@ defmodule Bankx.Account.Profile do
       true ->
         changeset
         |> put_change(:cpf_hash, HashField.hash(get_field(changeset, :cpf)))
+
+      _ ->
+        changeset
+    end
+  end
+
+  defp set_indicator(changeset) do
+    case changeset.valid? && !is_nil(get_field(changeset, :referral_code)) do
+      true ->
+        profile = Account.get_profile_by_referral_code(get_field(changeset, :referral_code))
+
+        changeset
+        |> put_change(:profile_id, profile.id)
 
       _ ->
         changeset

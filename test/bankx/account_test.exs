@@ -60,7 +60,7 @@ defmodule Bankx.AccountTest do
       ])
     end
 
-    test "get_profile_by_cpf/1 returns the profile with given id" do
+    test "get_profile_by_cpf/1 returns the profile" do
       profile = profile_fixture()
 
       assert Map.drop(Account.get_profile_by_cpf(@cpf), [:cpf_hash]) ==
@@ -142,11 +142,6 @@ defmodule Bankx.AccountTest do
 
       assert Map.drop(Account.get_profile_by_cpf(@cpf), [:cpf_hash]) ==
                remove_cpf_hash(profile)
-    end
-
-    test "change_profile/1 returns a profile changeset" do
-      profile = profile_fixture()
-      assert %Ecto.Changeset{} = Account.change_profile(profile)
     end
   end
 end
