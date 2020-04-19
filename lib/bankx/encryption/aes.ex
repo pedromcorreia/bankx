@@ -4,7 +4,10 @@ defmodule Bankx.Encryption.AES do
 
   def encrypt(plaintext) do
     iv = :crypto.strong_rand_bytes(16)
-    {ciphertext, tag} = :crypto.block_encrypt(:aes_gcm, key, iv, {@aad, to_string(plaintext), 16})
+
+    {ciphertext, tag} =
+      :crypto.block_encrypt(:aes_gcm, key(), iv, {@aad, to_string(plaintext), 16})
+
     iv <> tag <> ciphertext
   end
 

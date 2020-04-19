@@ -1,0 +1,18 @@
+{
+  "coverage_options": {
+    "treat_no_relevant_lines_as_covered": true,
+    "output_dir": "cover/",
+    "minimum_coverage": 90
+  },
+  "skip_files": [
+    "lib/bankx.ex",
+    "lib/bankx/repo.ex",
+    "lib/bankx/vault.ex",
+    "lib/bankx_web.ex",
+    "lib/bankx_web/channels/user_socket.ex",
+    "lib/bankx_web/endpoint.ex",
+    "lib/bankx_web/gettext.ex",
+    "test/support/channel_case.ex",
+    "test/support"
+  ]
+}

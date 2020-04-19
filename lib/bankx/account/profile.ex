@@ -5,9 +5,9 @@ defmodule Bankx.Account.Profile do
 
   use Ecto.Schema
   import Ecto.Changeset
-  alias Bankx.Encryption.{EncryptedField, HashField}
-  alias Bankx.Account.Profile
   alias Bankx.Account
+  alias Bankx.Account.Profile
+  alias Bankx.Encryption.{EncryptedField, HashField}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type Ecto.UUID
@@ -19,7 +19,7 @@ defmodule Bankx.Account.Profile do
     field :cpf_hash, HashField
     field :cpf, EncryptedField
     field :email, EncryptedField
-    field :gender, :string
+    field :gender, GenderEnum
     field :name, EncryptedField
     field :state, :string
     field :referral_code, :string
@@ -78,15 +78,15 @@ defmodule Bankx.Account.Profile do
     case changeset.valid? do
       true ->
         {:ok, encrypted_birth_date} = EncryptedField.dump(get_field(changeset, :birth_date))
+        {:ok, encrypted_cpf} = EncryptedField.dump(get_field(changeset, :cpf))
         {:ok, encrypted_email} = EncryptedField.dump(get_field(changeset, :email))
         {:ok, encrypted_name} = EncryptedField.dump(get_field(changeset, :name))
-        {:ok, encrypted_cpf} = EncryptedField.dump(get_field(changeset, :cpf))
 
         changeset
         |> put_change(:birth_date, encrypted_birth_date)
+        |> put_change(:cpf, encrypted_cpf)
         |> put_change(:email, encrypted_email)
         |> put_change(:name, encrypted_name)
-        |> put_change(:cpf, encrypted_cpf)
 
       _ ->
         changeset

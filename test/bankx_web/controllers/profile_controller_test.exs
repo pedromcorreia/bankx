@@ -3,7 +3,7 @@ defmodule BankxWeb.ProfileControllerTest do
 
   alias Bankx.Account
   alias Bankx.Account.Profile
-  alias Bankx.Encryption.{EncryptedField, HashField}
+  alias Bankx.Encryption.EncryptedField
 
   @cpf CPF.generate() |> to_string()
 
@@ -13,7 +13,7 @@ defmodule BankxWeb.ProfileControllerTest do
     country: "some country",
     cpf: @cpf,
     email: "some@mail.com",
-    gender: "some gender",
+    gender: "male",
     name: "some name",
     state: "some state",
     referral_code: ""
@@ -24,19 +24,9 @@ defmodule BankxWeb.ProfileControllerTest do
     country: "some country",
     cpf: CPF.generate() |> to_string(),
     email: "some_indicator@mail.com",
-    gender: "some gender",
+    gender: "female",
     name: "some name",
     state: "some state"
-  }
-  @update_attrs %{
-    birth_date: ~D[2011-05-18],
-    city: "some updated city",
-    country: "some updated country",
-    cpf: @cpf,
-    email: "someupdate@mail.com",
-    gender: "some updated gender",
-    name: "some updated name",
-    state: "some updated state"
   }
   @invalid_attrs %{
     birth_date: nil,
@@ -85,13 +75,13 @@ defmodule BankxWeb.ProfileControllerTest do
     end
 
     test "renders status pending when data is valid, then try update still pending", %{conn: conn} do
-      {:ok, profile} = Account.create_profile(%{cpf: @cpf})
+      {:ok, _profile} = Account.create_profile(%{cpf: @cpf})
       conn = post(conn, Routes.profile_path(conn, :account), profile: %{cpf: @cpf})
       assert %{"status" => "pending"} = json_response(conn, 200)["data"]
     end
 
     test "renders status pending when data is valid, then try update completed", %{conn: conn} do
-      {:ok, profile} = Account.create_profile(%{cpf: @cpf})
+      {:ok, _profile} = Account.create_profile(%{cpf: @cpf})
       conn = post(conn, Routes.profile_path(conn, :account), profile: @create_attrs)
       assert %{"status" => "completed"} = json_response(conn, 200)["data"]
     end
@@ -121,7 +111,7 @@ defmodule BankxWeb.ProfileControllerTest do
     end
 
     test "render code pending account when account completed whitout indication", %{conn: conn} do
-      {:ok, %Profile{referral_code: referral_code} = profile} =
+      {:ok, %Profile{referral_code: _referral_code} = profile} =
         Account.create_profile(@create_attrs)
 
       conn = get(conn, Routes.profile_path(conn, :indications, profile))
@@ -135,12 +125,12 @@ defmodule BankxWeb.ProfileControllerTest do
       {:ok, %Profile{referral_code: referral_code} = profile} =
         Account.create_profile(@create_attrs_indicator)
 
-      {:ok, %Profile{id: indication_id} = indication} =
+      {:ok, %Profile{id: _indication_id} = indication} =
         Account.create_profile(%{@create_attrs | referral_code: referral_code})
 
       conn = get(conn, Routes.profile_path(conn, :indications, profile))
 
-      {:ok, indication_name} = EncryptedField.load(indication.name)
+      {:ok, _indication_name} = EncryptedField.load(indication.name)
 
       assert %{
                "indications" => [
@@ -148,10 +138,5 @@ defmodule BankxWeb.ProfileControllerTest do
                ]
              } = json_response(conn, 200)["data"]
     end
-  end
-
-  defp create_profile(_) do
-    profile = fixture(:profile)
-    {:ok, profile: profile}
   end
 end

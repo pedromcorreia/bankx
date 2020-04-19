@@ -15,7 +15,7 @@ defmodule Bankx.AccountTest do
       country: "some country",
       cpf: @cpf,
       email: "some@mail.com",
-      gender: "some gender",
+      gender: "male",
       name: "some name",
       state: "some state"
     }
@@ -25,7 +25,7 @@ defmodule Bankx.AccountTest do
       country: "some updated country",
       cpf: @cpf,
       email: "someupdate@mail.com",
-      gender: "some updated gender",
+      gender: "female",
       name: "some updated name",
       state: "some updated state"
     }

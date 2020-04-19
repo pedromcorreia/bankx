@@ -10,7 +10,11 @@ defmodule Bankx.MixProject do
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test
+      ]
     ]
   end
 
@@ -44,7 +48,8 @@ defmodule Bankx.MixProject do
       {:cpf, "~> 1.0"},
       {:ecto_enum, "~> 1.4"},
       {:cloak, "1.0.2"},
-      {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.10", only: :test}
     ]
   end
 
