@@ -101,7 +101,11 @@ defmodule Bankx.AccountTest do
 
     test "create_profile/1 with same cpf and email" do
       assert {:ok, %Profile{} = profile} = Account.create_profile(@valid_attrs)
-      assert {:error, %Ecto.Changeset{}} = Account.create_profile(@valid_attrs)
+      assert {:error, %Ecto.Changeset{errors: errors}} = Account.create_profile(@valid_attrs)
+
+      assert errors[:cpf_hash] ==
+               {"has already been taken",
+                [{:constraint, :unique}, {:constraint_name, "profiles_cpf_hash_index"}]}
     end
 
     test "create_profile/1 with invalid data returns error changeset" do
