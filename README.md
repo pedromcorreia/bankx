@@ -1,9 +1,10 @@
 # Bankx
+I wrote a similar app: https://github.com/pedromcorreia/bank
 
 This applications supports you to create new bank account, follow your bank account
 status, invite other friends and follow indications.
 
-> This app use uuid as id for create a referral_code, this is used to send a
+- This app use uuid as id for create a referral_code, this is used to send a
  friend to invitation.
 
 > Why I uses the UUID as referral_code?
@@ -18,6 +19,10 @@ Well, I stated use Agent, cause this problem is looked like the exercism, but
 there is some problems that have I a used Agent, like lost some pid when the API
 is down, create and find by cpf or referral code a pid before save in postgres.
 My first choice: https://gist.github.com/pedromcorreia/c5b34e431c886b55eff5fa69714d738d
+
+> Authentication?
+Why I didn't use a lib for use authentication, like Guardian, here I used a authentication 
+just to check if exist user to load the account. 
 
 # Application structure
 
