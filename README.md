@@ -3,17 +3,17 @@
 This applications supports you to create new bank account, follow your bank account
 status, invite other friends and follow indications.
 
-- This app use uuid as id for create a referral_code, this is used to send a
+> This app use uuid as id for create a referral_code, this is used to send a
  friend to invitation.
 
-- Why I uses the UUID as referral_code?
+> Why I uses the UUID as referral_code?
 
 I tried to use different type of autocreate a referral_code, but if I tried to
 create based on database everytime load and create a new one this will spend a good time,
 so I was reading and check this https://github.com/hashicorp/nomad/issues/54 that they
  uses the first 8 chars from a uuid.
 
-- Why I use a simple Phoenix and Ecto app, instead use Agent to create Profiles?
+> Why I use a simple Phoenix and Ecto app, instead use Agent to create Profiles?
 Well, I stated use Agent, cause this problem is looked like the exercism, but
 there is some problems that have I a used Agent, like lost some pid when the API
 is down, create and find by cpf or referral code a pid before save in postgres.
