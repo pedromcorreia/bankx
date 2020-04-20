@@ -1,5 +1,4 @@
 # Bankx
-I wrote a similar app: https://github.com/pedromcorreia/bank
 
 This applications supports you to create new bank account, follow your bank account
 status, invite other friends and follow indications.
@@ -55,3 +54,7 @@ just to check if exist user to load the account.
  To contribute, please follow some patterns:
   - Commit messages, documentation and all code related things in english;
   - Before open pull requests, make sure that `credo` was executed;
+
+# Other app
+
+I wrote a similar app: https://github.com/pedromcorreia/bank
