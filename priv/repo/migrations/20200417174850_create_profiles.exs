@@ -6,6 +6,7 @@ defmodule Bankx.Repo.Migrations.CreateProfiles do
       add(:id, :uuid, primary_key: true)
       add(:name, :binary)
       add(:email, :binary)
+      add(:email_hash, :binary)
       add(:cpf, :binary)
       add(:cpf_hash, :binary)
       add(:birth_date, :binary)
@@ -21,7 +22,7 @@ defmodule Bankx.Repo.Migrations.CreateProfiles do
       timestamps()
     end
 
-    create(unique_index(:profiles, [:email]))
+    create(unique_index(:profiles, [:email_hash]))
     create(unique_index(:profiles, [:cpf_hash]))
   end
 end

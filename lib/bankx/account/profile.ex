@@ -18,6 +18,7 @@ defmodule Bankx.Account.Profile do
     field :country, :string
     field :cpf_hash, HashField
     field :cpf, EncryptedField
+    field :email_hash, HashField
     field :email, EncryptedField
     field :gender, GenderEnum
     field :name, EncryptedField
@@ -57,6 +58,7 @@ defmodule Bankx.Account.Profile do
     |> validate_format(:email, ~r/@/)
     |> set_hashed_fields
     |> unique_constraint(:cpf_hash)
+    |> unique_constraint(:email_hash)
     |> set_indicator
     |> encrypt_fields
   end
@@ -73,6 +75,7 @@ defmodule Bankx.Account.Profile do
     |> validate_format(:email, ~r/@/)
     |> set_hashed_fields
     |> unique_constraint(:cpf_hash)
+    |> unique_constraint(:email_hash)
     |> encrypt_fields
   end
 
@@ -116,6 +119,7 @@ defmodule Bankx.Account.Profile do
       true ->
         changeset
         |> put_change(:cpf_hash, HashField.hash(get_field(changeset, :cpf)))
+        |> put_change(:email_hash, HashField.hash(get_field(changeset, :email)))
 
       _ ->
         changeset

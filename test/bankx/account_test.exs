@@ -58,9 +58,14 @@ defmodule Bankx.AccountTest do
       Map.drop(
         %{profile | email: email, name: name, cpf: cpf, birth_date: birth_date},
         [
-          :cpf_hash
+          :cpf_hash,
+          :email_hash
         ]
       )
+    end
+
+    def response_for_profile(profile) do
+      Map.drop(profile, [:cpf_hash, :email_hash])
     end
 
     test "get_profile_by_referral_code/1 returns the profile" do
@@ -77,7 +82,7 @@ defmodule Bankx.AccountTest do
     test "get_profile_by_cpf/1 returns the profile" do
       profile = profile_fixture()
 
-      assert Map.drop(Account.get_profile_by_cpf(@cpf), [:cpf_hash]) ==
+      assert response_for_profile(Account.get_profile_by_cpf(@cpf)) ==
                remove_cpf_hash(profile)
     end
 
@@ -88,7 +93,7 @@ defmodule Bankx.AccountTest do
     test "create_profile/1 with valid data creates a profile" do
       assert {:ok, %Profile{} = profile} = Account.create_profile(@valid_attrs)
 
-      assert Map.drop(Account.get_profile_by_cpf(@cpf), [:cpf_hash]) ==
+      assert response_for_profile(Account.get_profile_by_cpf(@cpf)) ==
                remove_cpf_hash(profile)
 
       assert profile.cpf_hash == HashField.hash(@valid_attrs.cpf)
@@ -99,32 +104,47 @@ defmodule Bankx.AccountTest do
       Repo.insert!(Profile.changeset(%Profile{}, @valid_attrs))
 
       {:error, changeset} =
-        Repo.insert(Profile.changeset(%Profile{}, @valid_attrs))
+        Repo.insert(
+          Profile.changeset(%Profile{}, %{cpf: @cpf, email: @update_attrs.email})
+        )
 
       {:ok, message} = Keyword.fetch(changeset.errors, :cpf_hash)
       msg = List.first(Tuple.to_list(message))
       assert "has already been taken" == msg
     end
 
+    test "changeset validates uniqueness of email through email_hash" do
+      Repo.insert!(Profile.changeset(%Profile{}, @valid_attrs))
+
+      {:error, changeset} =
+        Repo.insert(Profile.changeset(%Profile{}, @valid_attrs))
+
+      {:ok, message} = Keyword.fetch(changeset.errors, :email_hash)
+      msg = List.first(Tuple.to_list(message))
+      assert "has already been taken" == msg
+    end
+
     test "create_profile/1 with cpf valid" do
-      assert {:ok, %Profile{} = profile} = Account.create_profile(%{cpf: @cpf})
+      assert {:ok, %Profile{} = profile} =
+               Account.create_profile(%{cpf: @cpf, email: @valid_attrs.email})
+
       assert profile.cpf_hash == HashField.hash(@valid_attrs.cpf)
       assert profile.status == :pending
     end
 
     test "create_profile/1 with cpf and email, status must be pending" do
       assert {:ok, %Profile{} = profile} =
-               Account.create_profile(%{cpf: @cpf, email: "email@mail.com"})
+               Account.create_profile(%{cpf: @cpf, email: @valid_attrs.email})
 
       assert profile.cpf_hash == HashField.hash(@valid_attrs.cpf)
       assert profile.status == :pending
     end
 
-    test "create_profile/1 with same cpf and email" do
+    test "create_profile/1 with same cpf" do
       assert {:ok, %Profile{} = profile} = Account.create_profile(@valid_attrs)
 
       assert {:error, %Ecto.Changeset{errors: errors}} =
-               Account.create_profile(@valid_attrs)
+               Account.create_profile(%{cpf: @cpf, email: @update_attrs.email})
 
       assert errors[:cpf_hash] ==
                {"has already been taken",
@@ -134,13 +154,31 @@ defmodule Bankx.AccountTest do
                 ]}
     end
 
+    test "create_profile/1 with same email" do
+      assert {:ok, %Profile{} = profile} = Account.create_profile(@valid_attrs)
+
+      cpf = CPF.generate() |> to_string
+
+      assert {:error, %Ecto.Changeset{errors: errors}} =
+               Account.create_profile(%{cpf: cpf, email: @valid_attrs.email})
+
+      assert errors[:email_hash] ==
+               {"has already been taken",
+                [
+                  {:constraint, :unique},
+                  {:constraint_name, "profiles_email_hash_index"}
+                ]}
+    end
+
     test "create_profile/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} =
                Account.create_profile(@invalid_attrs)
     end
 
     test "create_profile/1 create then update, turns status" do
-      assert {:ok, %Profile{} = profile} = Account.create_profile(%{cpf: @cpf})
+      assert {:ok, %Profile{} = profile} =
+               Account.create_profile(%{cpf: @cpf, email: @valid_attrs.email})
+
       assert profile.cpf_hash == HashField.hash(@valid_attrs.cpf)
       assert profile.status == :pending
 
@@ -151,7 +189,9 @@ defmodule Bankx.AccountTest do
     end
 
     test "create_profile/1 create then update some field then complete, turns status" do
-      assert {:ok, %Profile{} = profile} = Account.create_profile(%{cpf: @cpf})
+      assert {:ok, %Profile{} = profile} =
+               Account.create_profile(%{cpf: @cpf, email: @valid_attrs.email})
+
       assert profile.cpf_hash == HashField.hash(@valid_attrs.cpf)
       assert profile.status == :pending
       assert is_nil(profile.referral_code)
@@ -185,7 +225,7 @@ defmodule Bankx.AccountTest do
       assert {:error, %Ecto.Changeset{}} =
                Account.update_profile(profile, @invalid_attrs)
 
-      assert Map.drop(Account.get_profile_by_cpf(@cpf), [:cpf_hash]) ==
+      assert response_for_profile(Account.get_profile_by_cpf(@cpf)) ==
                remove_cpf_hash(profile)
     end
   end

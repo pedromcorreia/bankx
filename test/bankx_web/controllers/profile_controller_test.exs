@@ -28,7 +28,7 @@ defmodule BankxWeb.ProfileControllerTest do
     name: "some name",
     state: "some state"
   }
-  @invalid_attrs %{
+  @increate_attrs %{
     birth_date: nil,
     city: nil,
     country: nil,
@@ -84,7 +84,8 @@ defmodule BankxWeb.ProfileControllerTest do
 
     test "renders status pending when data is valid, then try update still pending",
          %{conn: conn} do
-      {:ok, _profile} = Account.create_profile(%{cpf: @cpf})
+      {:ok, _profile} =
+        Account.create_profile(%{cpf: @cpf, email: @create_attrs.email})
 
       conn =
         post(conn, Routes.profile_path(conn, :account), profile: %{cpf: @cpf})
@@ -94,7 +95,8 @@ defmodule BankxWeb.ProfileControllerTest do
 
     test "renders status pending when data is valid, then try update completed",
          %{conn: conn} do
-      {:ok, _profile} = Account.create_profile(%{cpf: @cpf})
+      {:ok, _profile} =
+        Account.create_profile(%{cpf: @cpf, email: @create_attrs.email})
 
       conn =
         post(conn, Routes.profile_path(conn, :account), profile: @create_attrs)
@@ -104,7 +106,7 @@ defmodule BankxWeb.ProfileControllerTest do
 
     test "renders errors when data is invalid", %{conn: conn} do
       conn =
-        post(conn, Routes.profile_path(conn, :account), profile: @invalid_attrs)
+        post(conn, Routes.profile_path(conn, :account), profile: @increate_attrs)
 
       assert json_response(conn, 422)["errors"] != %{}
     end
@@ -120,7 +122,9 @@ defmodule BankxWeb.ProfileControllerTest do
     end
 
     test "render code pending account when account pending", %{conn: conn} do
-      {:ok, %Profile{} = profile} = Account.create_profile(%{cpf: @cpf})
+      {:ok, %Profile{} = profile} =
+        Account.create_profile(%{cpf: @cpf, email: @create_attrs.email})
+
       conn = get(conn, Routes.profile_path(conn, :indications, profile))
 
       assert %{
