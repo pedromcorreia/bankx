@@ -9,6 +9,10 @@ defmodule BankxWeb.Router do
     plug(BankxWeb.Auth)
   end
 
+  pipeline :guardian do
+    plug(BankxWeb.GuardianAuth)
+  end
+
   scope "/api", BankxWeb do
     pipe_through :api
 
@@ -16,9 +20,15 @@ defmodule BankxWeb.Router do
   end
 
   scope "/api", BankxWeb do
+    pipe_through [:api, :guardian]
+
+    get "/profiles/indications", ProfileController, :indications
+  end
+
+  scope "/api", BankxWeb do
     pipe_through [:api, :auth]
 
     resources "/profiles", ProfileController, only: [:show]
-    get "/profiles/indications/:referral_code", ProfileController, :indications
+    get "/profiles/sign_in/:referral_code", ProfileController, :sign_in
   end
 end

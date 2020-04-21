@@ -13,6 +13,10 @@ defmodule BankxWeb.ProfileView do
     %{data: render_one(profile, ProfileView, "profile.json")}
   end
 
+  def render("token.json", %{token: token}) do
+    %{data: %{token: token}}
+  end
+
   def render("profile.json", %{
         profile: %{status: :completed, profiles: profiles}
       })

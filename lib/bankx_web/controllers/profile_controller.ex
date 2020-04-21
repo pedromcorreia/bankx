@@ -10,13 +10,15 @@ defmodule BankxWeb.ProfileController do
     with %{"cpf" => cpf} <- profile_params,
          %Profile{} = profile <- Account.get_profile_by_cpf(cpf) do
       with {:ok, %Profile{} = profile} <-
-             Account.update_profile(profile, profile_params) do
+             Account.update_profile(profile, profile_params),
+           {:ok, _token, _claims} = Bankx.Guardian.encode_and_sign(profile) do
         render(conn, "show.json", profile: profile)
       end
     else
       _ ->
         with {:ok, %Profile{} = profile} <-
-               Account.create_profile(profile_params) do
+               Account.create_profile(profile_params),
+             {:ok, _token, _claims} = Bankx.Guardian.encode_and_sign(profile) do
           conn
           |> put_status(:created)
           |> put_resp_header(
@@ -28,7 +30,14 @@ defmodule BankxWeb.ProfileController do
     end
   end
 
-  def indications(conn, %{"referral_code" => referral_code} = params) do
+  def sign_in(conn, _params) do
+    {:ok, token, _claims} =
+      Bankx.Guardian.encode_and_sign(conn.assigns[:profile])
+
+    render(conn, "token.json", token: token)
+  end
+
+  def indications(conn, _params) do
     with %Profile{} = profile <- conn.assigns[:profile] do
       render(conn, "show.json", profile: profile)
     else

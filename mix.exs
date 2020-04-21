@@ -49,7 +49,8 @@ defmodule Bankx.MixProject do
       {:ecto_enum, "~> 1.4"},
       {:cloak, "1.0.2"},
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.10", only: :test},
+      {:guardian, "~> 2.0"}
     ]
   end
 

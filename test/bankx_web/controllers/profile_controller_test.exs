@@ -44,6 +44,21 @@ defmodule BankxWeb.ProfileControllerTest do
     profile
   end
 
+  def token(profile) do
+    {:ok, cpf} = EncryptedField.load(profile.cpf)
+
+    conn =
+      get(build_conn(), Routes.profile_path(build_conn(), :sign_in, profile), %{
+        cpf: cpf
+      })
+
+    %{
+      "token" => token
+    } = json_response(conn, 200)["data"]
+
+    token
+  end
+
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
@@ -59,9 +74,9 @@ defmodule BankxWeb.ProfileControllerTest do
       profile = Bankx.Repo.one(Profile)
 
       conn =
-        get(conn, Routes.profile_path(conn, :indications, profile), %{
-          cpf: @create_attrs.cpf
-        })
+        build_conn()
+        |> put_req_header("authorization", "bearer: " <> token(profile))
+        |> get(Routes.profile_path(conn, :indications))
 
       assert %{
                "indications" => []
@@ -119,19 +134,14 @@ defmodule BankxWeb.ProfileControllerTest do
       assert json_response(conn, 422)["errors"] != %{}
     end
 
-    test "render not found when sends referral_code inexistent", %{conn: conn} do
-      conn = get(conn, Routes.profile_path(conn, :indications, "-1"))
-      assert conn.status == 404
-    end
-
     test "render code pending account when account pending", %{conn: conn} do
       {:ok, %Profile{} = profile} =
         Account.create_profile(%{cpf: @cpf, email: @create_attrs.email})
 
       conn =
-        get(conn, Routes.profile_path(conn, :indications, profile), %{
-          cpf: @create_attrs.cpf
-        })
+        build_conn()
+        |> put_req_header("authorization", "bearer: " <> token(profile))
+        |> get(Routes.profile_path(conn, :indications))
 
       assert %{
                "status" => "pending"
@@ -144,24 +154,30 @@ defmodule BankxWeb.ProfileControllerTest do
         Account.create_profile(@create_attrs)
 
       conn =
-        get(conn, Routes.profile_path(conn, :indications, profile), %{
-          cpf: @create_attrs.cpf
-        })
+        build_conn()
+        |> put_req_header("authorization", "bearer: " <> token(profile))
+        |> get(Routes.profile_path(conn, :indications))
 
       assert %{
                "indications" => []
              } = json_response(conn, 200)["data"]
     end
 
-    test "render unauthorized",
+    test "render authorized",
          %{conn: conn} do
       {:ok, %Profile{referral_code: _referral_code} = profile} =
         Account.create_profile(@create_attrs)
 
       conn =
-        get(conn, Routes.profile_path(conn, :indications, profile), %{cpf: 1})
+        get(conn, Routes.profile_path(conn, :sign_in, profile),
+          cpf: @create_attrs.cpf
+        )
 
-      assert conn.status == 401
+      assert %{
+               "token" => _
+             } = json_response(conn, 200)["data"]
+
+      assert conn.status == 200
     end
 
     test "render code pending account when account completed with indications",
@@ -173,9 +189,9 @@ defmodule BankxWeb.ProfileControllerTest do
         Account.create_profile(%{@create_attrs | referral_code: referral_code})
 
       conn =
-        get(conn, Routes.profile_path(conn, :indications, profile), %{
-          cpf: @create_attrs_indicator.cpf
-        })
+        build_conn()
+        |> put_req_header("authorization", "bearer: " <> token(profile))
+        |> get(Routes.profile_path(conn, :indications))
 
       {:ok, _indication_name} = EncryptedField.load(indication.name)
 
