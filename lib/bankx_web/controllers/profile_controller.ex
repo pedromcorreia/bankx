@@ -28,8 +28,8 @@ defmodule BankxWeb.ProfileController do
     end
   end
 
-  def indications(conn, %{"referral_code" => referral_code}) do
-    with %Profile{} = profile <- Account.get_profile(referral_code) do
+  def indications(conn, %{"referral_code" => referral_code} = params) do
+    with %Profile{} = profile <- conn.assigns[:profile] do
       render(conn, "show.json", profile: profile)
     else
       _ -> {:error, :not_found}

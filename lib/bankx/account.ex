@@ -25,9 +25,37 @@ defmodule Bankx.Account do
   def get_profile(nil), do: nil
 
   def get_profile(id) do
-    Profile
-    |> Repo.get(id)
-    |> Repo.preload(:profiles)
+    result =
+      Profile
+      |> Repo.get(id)
+      |> Repo.preload(:profiles)
+
+    case result do
+      nil ->
+        nil
+
+      _ ->
+        profile =
+          %Profile{
+            name: name,
+            email: email,
+            cpf: cpf,
+            birth_date: birth_date
+          } = result
+
+        {:ok, email} = EncryptedField.load(email)
+        {:ok, name} = EncryptedField.load(name)
+        {:ok, cpf} = EncryptedField.load(cpf)
+        {:ok, birth_date} = EncryptedField.load(birth_date)
+
+        %{
+          profile
+          | email: email,
+            name: name,
+            cpf: cpf,
+            birth_date: birth_date
+        }
+    end
   rescue
     Ecto.Query.CastError -> nil
   end

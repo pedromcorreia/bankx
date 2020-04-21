@@ -58,7 +58,10 @@ defmodule BankxWeb.ProfileControllerTest do
 
       profile = Bankx.Repo.one(Profile)
 
-      conn = get(conn, Routes.profile_path(conn, :indications, profile))
+      conn =
+        get(conn, Routes.profile_path(conn, :indications, profile), %{
+          cpf: @create_attrs.cpf
+        })
 
       assert %{
                "indications" => []
@@ -118,14 +121,17 @@ defmodule BankxWeb.ProfileControllerTest do
 
     test "render not found when sends referral_code inexistent", %{conn: conn} do
       conn = get(conn, Routes.profile_path(conn, :indications, "-1"))
-      assert json_response(conn, 404)["errors"] != %{}
+      assert conn.status == 404
     end
 
     test "render code pending account when account pending", %{conn: conn} do
       {:ok, %Profile{} = profile} =
         Account.create_profile(%{cpf: @cpf, email: @create_attrs.email})
 
-      conn = get(conn, Routes.profile_path(conn, :indications, profile))
+      conn =
+        get(conn, Routes.profile_path(conn, :indications, profile), %{
+          cpf: @create_attrs.cpf
+        })
 
       assert %{
                "status" => "pending"
@@ -137,11 +143,25 @@ defmodule BankxWeb.ProfileControllerTest do
       {:ok, %Profile{referral_code: _referral_code} = profile} =
         Account.create_profile(@create_attrs)
 
-      conn = get(conn, Routes.profile_path(conn, :indications, profile))
+      conn =
+        get(conn, Routes.profile_path(conn, :indications, profile), %{
+          cpf: @create_attrs.cpf
+        })
 
       assert %{
                "indications" => []
              } = json_response(conn, 200)["data"]
+    end
+
+    test "render unauthorized",
+         %{conn: conn} do
+      {:ok, %Profile{referral_code: _referral_code} = profile} =
+        Account.create_profile(@create_attrs)
+
+      conn =
+        get(conn, Routes.profile_path(conn, :indications, profile), %{cpf: 1})
+
+      assert conn.status == 401
     end
 
     test "render code pending account when account completed with indications",
@@ -152,7 +172,10 @@ defmodule BankxWeb.ProfileControllerTest do
       {:ok, %Profile{id: _indication_id} = indication} =
         Account.create_profile(%{@create_attrs | referral_code: referral_code})
 
-      conn = get(conn, Routes.profile_path(conn, :indications, profile))
+      conn =
+        get(conn, Routes.profile_path(conn, :indications, profile), %{
+          cpf: @create_attrs_indicator.cpf
+        })
 
       {:ok, _indication_name} = EncryptedField.load(indication.name)
 
