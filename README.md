@@ -45,6 +45,11 @@ My first choice: https://gist.github.com/pedromcorreia/c5b34e431c886b55eff5fa697
 
  https://www.getpostman.com/collections/83a8cd18664af13964a8
  
+ # DOC
+ This is a API documentation
+ 
+ https://documenter.getpostman.com/view/2740945/SzfAzmY9
+ 
  # Contributing
 
  To contribute, please follow some patterns:
