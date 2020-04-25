@@ -19,10 +19,6 @@ there is some problems that have I a used Agent, like lost some pid when the API
 is down, create and find by cpf or referral code a pid before save in postgres.
 My first choice: https://gist.github.com/pedromcorreia/c5b34e431c886b55eff5fa69714d738d
 
-> Authentication?
-Why I didn't use a lib for use authentication, like Guardian, here I used a authentication 
-just to check if exist user to load the account. 
-
 # Application structure
 
 - bankx_web: is our API that response for communicate with client.
